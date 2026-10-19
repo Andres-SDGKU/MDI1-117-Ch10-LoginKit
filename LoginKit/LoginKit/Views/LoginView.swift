@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
+    // TODO (Exercise 8): add a @State to show / hide the password
 
     init(authService: AuthServiceProtocol = AuthService()) {
         _viewModel = StateObject(wrappedValue: LoginViewModel(authService: authService))
@@ -26,6 +27,8 @@ struct LoginView: View {
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("email_field")
 
+                // TODO (Exercise 8): switch between SecureField and TextField,
+                // plus an eye button with id "toggle_password_visibility"
                 SecureField("Password", text: $viewModel.password)
                     .textFieldStyle(.roundedBorder)
                     .accessibilityIdentifier("password_field")
@@ -50,6 +53,8 @@ struct LoginView: View {
                     }
                 }
                 .accessibilityIdentifier("login_button")
+                // TODO (Exercise 7): also disable while email or password is empty
+                // TODO (Exercise 10): also disable when the user is locked out
                 .disabled(viewModel.isLoading)
             }
             .padding()

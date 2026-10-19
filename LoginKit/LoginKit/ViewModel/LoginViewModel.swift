@@ -16,6 +16,7 @@ final class LoginViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var loggedInUser: User?
+    // TODO (Exercise 10): count failed attempts and expose `isLockedOut` (3 or more)
  
     private let authService: AuthServiceProtocol
     private var sessionStore: SessionStoring
@@ -45,6 +46,7 @@ final class LoginViewModel: ObservableObject {
                 sessionStore.clear()
             }
         } catch {
+            // TODO (Exercise 10): on the 3rd failure show "Too many attempts. Try again later."
             errorMessage = error.localizedDescription
         }
     }

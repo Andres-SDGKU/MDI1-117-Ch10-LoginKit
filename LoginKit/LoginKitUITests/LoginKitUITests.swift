@@ -9,35 +9,42 @@ import XCTest
 
 final class LoginKitUITests: XCTestCase {
 
+    // MARK: Class #4 UI Testing
+    
+    var app: XCUIApplication!
+    var loginScreen: LoginScreen!
+    var dashboardScreen: DashboardScreen!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+        app = XCUIApplication()
+        app.launchArguments = ["-UITesting-Reset"]
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        loginScreen = LoginScreen(app: app)
+        dashboardScreen = DashboardScreen(app: app)
     }
 
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    /// Test #1 - Navigate to dashboard
+    func test_successfulLogin_navigatesToDashboard() throws {
+        loginScreen.login(email: "test@mail.com", password: "test1234")
+        XCTAssertTrue(dashboardScreen.welcomeLabel.waitForExistence(timeout: 5))
+    }
+    
+    /// Test #2 - Failure Path
+    func test_invalidLogin_showsErrorMessage() throws {
+        loginScreen.login(email: "testerror@mail.com", password: "1234test")
+        XCTAssertTrue(loginScreen.errorLabel.waitForExistence(timeout: 5))
+        XCTAssertFalse(dashboardScreen.welcomeLabel.exists)
+    }
+    
+    /// Test #3 - Logout
+    func test_logout_returnsToLoginScreen() throws {
+        loginScreen.login(email: "test@mail.com", password: "test1234")
+        XCTAssertTrue(dashboardScreen.welcomeLabel.waitForExistence(timeout: 5))
+
+        dashboardScreen.logout()
+        
+        XCTAssertTrue(loginScreen.emailField.waitForExistence(timeout: 5))
+        XCTAssertFalse(dashboardScreen.welcomeLabel.exists)
     }
 }
