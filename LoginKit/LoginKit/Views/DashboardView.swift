@@ -46,6 +46,9 @@ struct DashboardView: View {
     // Simulates a dashboard that finishes loading its actions after it appears.
     // TODO (Exercise 3): return .zero when the app is launched with "-UITesting-NoAnimations"
     private var entranceDelay: Duration {
-        .milliseconds(Int.random(in: 300...1500))
+        if ProcessInfo.processInfo.arguments.contains("-UITesting-NoAnimations") {
+            return .zero
+        }
+        return .milliseconds(Int.random(in: 300...1500))
     }
 }

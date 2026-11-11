@@ -14,8 +14,10 @@ struct LoginKitApp: App {
         if ProcessInfo.processInfo.arguments.contains("-UITesting-Reset") {
             SessionStore().clear()
         }
-        // TODO (Exercise 3): when launched with "-UITesting-NoAnimations",
-        // call UIView.setAnimationsEnabled(false). You'll need `import UIKit`.
+       /// Exercise #3 - Disable animations
+        if ProcessInfo.processInfo.arguments.contains("-UITesting-NoAnimations") {
+            UIView.setAnimationsEnabled(false)
+        }
     }
  
     var body: some Scene {

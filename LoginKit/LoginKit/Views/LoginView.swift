@@ -10,7 +10,8 @@ import SwiftUI
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
     // TODO (Exercise 8): add a @State to show / hide the password
-
+    @State private var isPasswordVisible = false
+    
     init(authService: AuthServiceProtocol = AuthService()) {
         _viewModel = StateObject(wrappedValue: LoginViewModel(authService: authService))
     }
@@ -29,10 +30,27 @@ struct LoginView: View {
 
                 // TODO (Exercise 8): switch between SecureField and TextField,
                 // plus an eye button with id "toggle_password_visibility"
-                SecureField("Password", text: $viewModel.password)
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityIdentifier("password_field")
-
+                HStack  {
+                    if isPasswordVisible {
+                        TextField("Password", text: $viewModel.password)
+                            .textFieldStyle(.roundedBorder)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .accessibilityIdentifier("password_field")
+                    } else {
+                        SecureField("Password", text: $viewModel.password)
+                            .textFieldStyle(.roundedBorder)
+                            .accessibilityIdentifier("password_field")
+                    }
+                    
+                    Button {
+                        isPasswordVisible.toggle()
+                    } label: {
+                        Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                    }
+                    .accessibilityIdentifier("toggle_password_visibility")
+                }
+                
                 Toggle("Remember Me", isOn: $viewModel.rememberMe)
                     .accessibilityIdentifier("remember_me_toggle")
 
@@ -55,7 +73,7 @@ struct LoginView: View {
                 .accessibilityIdentifier("login_button")
                 // TODO (Exercise 7): also disable while email or password is empty
                 // TODO (Exercise 10): also disable when the user is locked out
-                .disabled(viewModel.isLoading)
+                .disabled(viewModel.isLoading || viewModel.email.isEmpty || viewModel.password.isEmpty)
             }
             .padding()
             .navigationDestination(item: $viewModel.loggedInUser) { user in

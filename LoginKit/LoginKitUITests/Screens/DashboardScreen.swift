@@ -15,6 +15,7 @@ struct DashboardScreen {
     
     @discardableResult
     func logout() -> Self {
+        XCTAssertTrue(logoutButton.wait(until: "isEnabled == true"), "Logout button never became enabled")
         logoutButton.tap()
         return self
     }

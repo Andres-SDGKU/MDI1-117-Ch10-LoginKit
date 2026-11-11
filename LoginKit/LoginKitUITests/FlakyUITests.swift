@@ -18,9 +18,7 @@ final class FlakyUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        // TODO (Exercise 3): disable animations with a launch argument
-        // TODO (Exercise 5): reset the app state before every test
-        app.launchArguments = []
+        app.launchArguments = ["-UITesting-Reset", "-UITesting-NoAnimations"]
         app.launch()
         loginScreen = LoginScreen(app: app)
         dashboardScreen = DashboardScreen(app: app)
@@ -31,7 +29,8 @@ final class FlakyUITests: XCTestCase {
         loginScreen.login(email: "test@mail.com", password: "test1234")
         XCTAssertTrue(dashboardScreen.welcomeLabel.waitForExistence(timeout: 5))
 
-        dashboardScreen.logoutButton.tap() // 🔴 the button may not be ready yet
+        XCTAssertTrue(dashboardScreen.logoutButton.wait(until: "isEnabled == true"))
+        dashboardScreen.logoutButton.tap()
 
         XCTAssertTrue(loginScreen.emailField.waitForExistence(timeout: 5))
     }
@@ -40,9 +39,7 @@ final class FlakyUITests: XCTestCase {
     func test_successfulLogin_arbitrarySleep_isFlaky() throws {
         loginScreen.login(email: "test@mail.com", password: "test1234")
 
-        Thread.sleep(forTimeInterval: 0.45) // 🔴 fix me
-
-        XCTAssertTrue(dashboardScreen.welcomeLabel.exists)
+        XCTAssertTrue(dashboardScreen.welcomeLabel.waitForExistence(timeout: 5))
     }
 
     /// Exercise 5 — Shared state

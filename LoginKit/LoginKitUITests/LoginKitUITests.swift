@@ -18,7 +18,7 @@ final class LoginKitUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments = ["-UITesting-Reset"]
+        app.launchArguments = ["-UITesting-Reset", "-UITesting-NoAnimations"]
         app.launch()
         loginScreen = LoginScreen(app: app)
         dashboardScreen = DashboardScreen(app: app)
